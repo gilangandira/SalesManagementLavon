@@ -26,9 +26,10 @@ import {
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const CUSTOMER_API = "http://localhost:8000/api/customers?all=1";
-const CLUSTER_API = "http://localhost:8000/api/clusters?all=1";
-const SALES_API = "http://localhost:8000/api/sales";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api";
+const CUSTOMER_API = `${API_BASE}/customers?all=1`;
+const CLUSTER_API = `${API_BASE}/clusters?all=1`;
+const SALES_API = `${API_BASE}/sales`;
 
 // Defines tipe data untuk Customer dan Cluster
 interface Customer {

@@ -47,7 +47,7 @@ export default function CustomerDashboard() {
   const fetchCustomerStats = async () => {
     try {
       const token = await getToken();
-      const res = await fetch("http://localhost:8000/api/customers/stats", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/customers/stats`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

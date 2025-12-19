@@ -49,7 +49,7 @@ export default function ClusterDashboard() {
   const fetchStats = async () => {
     try {
       const token = await getToken(); // Ambil token otentikasi
-      const res = await fetch("http://localhost:8000/api/clusters/stats", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/clusters/stats`, {
         headers: {
           Authorization: `Bearer ${token}`, // Sertakan token di header request
         }

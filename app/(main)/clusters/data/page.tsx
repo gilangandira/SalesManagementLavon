@@ -35,7 +35,7 @@ import { Input } from "@/components/ui/input";
 import { Trash2, Edit } from "lucide-react";
 import Link from "next/link";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api";
 const API_URL = `${BASE_URL}/clusters`;
 
 // ===== Tipe Data (Types) =====

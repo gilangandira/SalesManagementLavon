@@ -24,7 +24,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination";
 
-const API_URL = "http://localhost:8000/api/payments";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/payments`;
 
 interface Payment {
     id: number;

@@ -38,7 +38,7 @@ export default function UsersPage() {
     const fetchUsers = async () => {
         try {
             const token = await getToken();
-            const res = await fetch("http://localhost:8000/api/users", {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/users`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -63,7 +63,7 @@ export default function UsersPage() {
         if (!confirm("Are you sure?")) return;
         try {
             const token = await getToken();
-            const res = await fetch(`http://localhost:8000/api/users/${id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/users/${id}`, {
                 method: "DELETE",
                 headers: {
                     Authorization: `Bearer ${token}`,

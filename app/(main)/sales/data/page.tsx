@@ -44,7 +44,7 @@ import {
 import { Search, Check, ChevronsUpDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
-const API_URL = "http://localhost:8000/api/sales";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/sales`;
 
 interface Sale {
   id: number;
@@ -97,7 +97,7 @@ export default function SalesPage() {
       try {
         const token = await getToken();
         // Cek permission dari /api/me
-        const res = await fetch("http://localhost:8000/api/me", {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const user = await res.json();
@@ -185,7 +185,7 @@ export default function SalesPage() {
   const handleExport = async () => {
     try {
       const token = await getToken();
-      const res = await fetch(`http://localhost:8000/api/reports/export`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/reports/export`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }

@@ -11,7 +11,7 @@ import { CircleDollarSign, Users, CreditCard, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
-const SALES_API = "http://localhost:8000/api/sales?all=1";
+const SALES_API = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/sales?all=1`;
 
 interface Sale {
   id: number;
@@ -32,24 +32,24 @@ export default function DashboardPage() {
 
   useEffect(() => {
     const fetchSales = async () => {
-        const token = await getToken();
-        fetch(SALES_API, {
-            headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/json",
-            },
-        })
+      const token = await getToken();
+      fetch(SALES_API, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      })
         .then((res) => res.json())
         .then((json) => {
-            if (json.success) {
+          if (json.success) {
             // Handle response format if it's direct array or paginated
             const list = Array.isArray(json.data) ? json.data : json.data.data;
             setSales(list || []);
-            }
+          }
         })
         .catch((err) => {
-            console.error(err);
-            toast.error("Failed to load dashboard data");
+          console.error(err);
+          toast.error("Failed to load dashboard data");
         })
         .finally(() => setLoading(false));
     };
@@ -60,10 +60,10 @@ export default function DashboardPage() {
   const totalRevenue = sales.reduce((acc, s) => acc + Number(s.payment_amount), 0);
   const totalPotential = sales.reduce((acc, s) => acc + Number(s.price), 0);
   const totalReceivables = totalPotential - totalRevenue;
-  
-  const overdueCount = sales.filter(s => 
-     s.payment_status_info?.status === 'Overdue' || 
-     (s.payment_status_info?.status === 'Due Soon') // Optional: count due soon as warning
+
+  const overdueCount = sales.filter(s =>
+    s.payment_status_info?.status === 'Overdue' ||
+    (s.payment_status_info?.status === 'Due Soon') // Optional: count due soon as warning
   ).length;
 
   const strictOverdueCount = sales.filter(s => s.payment_status_info?.status === 'Overdue').length;
@@ -119,11 +119,11 @@ export default function DashboardPage() {
         </div>
 
         {loading ? (
-             <div className="flex items-center justify-center p-12">
-               <Progress className="w-[60%]" />
-             </div>
+          <div className="flex items-center justify-center p-12">
+            <Progress className="w-[60%]" />
+          </div>
         ) : (
-             <DashboardCharts salesData={sales} />
+          <DashboardCharts salesData={sales} />
         )}
       </div>
     </SidebarInset>

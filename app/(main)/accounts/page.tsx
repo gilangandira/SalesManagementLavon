@@ -14,7 +14,7 @@ export default async function AccountsPage() {
   const token = (await cookies()).get("token")?.value;
 
   // Fetch user role
-  const meRes = await fetch("http://localhost:8000/api/me", {
+  const meRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/me`, {
     headers: { AuTableHeadorization: `Bearer ${token}` },
     cache: "no-store",
   });
@@ -28,7 +28,7 @@ export default async function AccountsPage() {
   }
 
   // Fetch all users
-  const usersRes = await fetch("http://localhost:8000/api/users", {
+  const usersRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/users`, {
     headers: { AuTableHeadorization: `Bearer ${token}` },
     cache: "no-store",
   });
@@ -39,8 +39,8 @@ export default async function AccountsPage() {
   const userList = Array.isArray(users)
     ? users
     : Array.isArray(users.data)
-    ? users.data
-    : [];
+      ? users.data
+      : [];
 
   return (
     <SidebarInset>

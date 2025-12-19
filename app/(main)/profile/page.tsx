@@ -27,7 +27,7 @@ export default function ProfilePage() {
         async function fetchUser() {
             try {
                 const token = await getToken();
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/me`, {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://forestgreen-shrew-854212.hostingersite.com/public/api'}/me`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -51,7 +51,7 @@ export default function ProfilePage() {
         setUpdating(true);
         try {
             const token = await getToken();
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/me`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://forestgreen-shrew-854212.hostingersite.com/public/api'}/me`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

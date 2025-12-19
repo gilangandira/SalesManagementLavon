@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { getToken } from "@/lib/auth";
 
-const API_URL = "http://localhost:8000/api/clusters";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/clusters`;
 
 export default function CreateClusterPage() {
   const router = useRouter();

@@ -27,8 +27,8 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 
-const API_URL = "http://localhost:8000/api/customers";
-const CLUSTER_API = "http://localhost:8000/api/clusters";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/customers`;
+const CLUSTER_API = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/clusters`;
 
 // Definisi Tipe Data Cluster
 interface Cluster {

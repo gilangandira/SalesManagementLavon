@@ -49,8 +49,8 @@ import { Check, ChevronsUpDown, Eye, Edit, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-const API_URL = "http://localhost:8000/api/customers";
-const CLUSTER_URL = "http://localhost:8000/api/clusters";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/customers`;
+const CLUSTER_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/clusters`;
 
 // ===== Types =====
 interface Cluster {
@@ -103,7 +103,7 @@ export default function CustomersPage() {
     try {
       const token = await getToken();
       // Fallback to simpler check or just assume if token exists we can verify me
-      const res = await fetch("http://localhost:8000/api/me", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/me`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const user = await res.json();
@@ -208,7 +208,7 @@ export default function CustomersPage() {
 
     try {
       const token = await getToken();
-      const res = await fetch(`http://localhost:8000/api/customers/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/customers/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`

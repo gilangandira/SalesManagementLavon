@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Trophy, TrendingUp, DollarSign } from "lucide-react";
 
-const API_URL = "http://localhost:8000/api/rankings";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/rankings`;
 
 interface RankUser {
     id: number;

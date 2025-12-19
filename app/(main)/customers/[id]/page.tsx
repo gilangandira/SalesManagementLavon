@@ -11,7 +11,7 @@ import { notFound } from "next/navigation";
 
 import { cookies } from "next/headers";
 
-const API_URL = "http://localhost:8000/api/customers";
+const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/customers`;
 
 async function getCustomer(id: string) {
   const cookieStore = await cookies();
