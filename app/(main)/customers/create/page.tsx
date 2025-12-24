@@ -62,6 +62,7 @@ export default function CreateCustomerPage() {
     cluster_id: "",
     payment_amount: 0,
     payment_method: "cash_bertahap", // "cash_bertahap" | "kpr"
+    interest_rate: 0, // New field for interest
   });
 
   const isKPR = form.payment_method === "kpr"; // Cek apakah metode KPR
@@ -92,7 +93,8 @@ export default function CreateCustomerPage() {
         ...f,
         criteria: "Booked", // Jika KPR, status otomatis "Booked"
         payment_amount: kprBF, // Set Booking Fee otomatis 10jt
-        cicilan: "0" // Cicilan diabaikan (urusan Bank)
+        cicilan: "0", // Cicilan diabaikan (urusan Bank)
+        interest_rate: 0
       }));
     } else {
       // Jika kembali ke Cash Bertahap
@@ -101,7 +103,8 @@ export default function CreateCustomerPage() {
         ...f,
         criteria: "Visited", // Reset ke Visited
         payment_amount: 0,
-        cicilan: ""
+        cicilan: "",
+        interest_rate: 0
       }));
     }
   }, [form.payment_method]);
@@ -135,11 +138,18 @@ export default function CreateCustomerPage() {
   // Kalkulasi Cicilan Bulanan untuk Cash Bertahap
   const deposit = Number(form.payment_amount) || 0;
   const cicilanVal = Number(form.cicilan) || 0;
+  const rateVal = Number(form.interest_rate) || 0;
 
-  // Rumus: (Harga - Deposit Pembayaran Awal) / Jumlah Bulan Cicilan
-  const monthlyVal = !isKPR && (price - deposit) > 0 && cicilanVal > 0
-    ? (price - deposit) / cicilanVal
-    : 0;
+  let monthlyVal = 0;
+  if (!isKPR && (price - deposit) > 0 && cicilanVal > 0) {
+    const loan = price - deposit;
+    if (rateVal > 0) {
+      const r = (rateVal / 12) / 100;
+      monthlyVal = (loan * r * Math.pow(1 + r, cicilanVal)) / (Math.pow(1 + r, cicilanVal) - 1);
+    } else {
+      monthlyVal = loan / cicilanVal;
+    }
+  }
 
   // Submit ke API
   async function handleSubmit(e: any) {
@@ -477,6 +487,21 @@ export default function CreateCustomerPage() {
                       placeholder="e.g. 12 months"
                     />
                   </div>
+
+                  {(form.criteria === "Deposited" || form.criteria === "Booked") && (
+                    <div className="flex items-center gap-4">
+                      <Label className="w-32">Bunga (%)</Label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={form.interest_rate === 0 ? "" : form.interest_rate}
+                        onChange={(e) =>
+                          setForm({ ...form, interest_rate: Number(e.target.value) })
+                        }
+                        placeholder="e.g. 11.5"
+                      />
+                    </div>
+                  )}
 
                   {/* Estimasi Cicilan Bulanan */}
                   {monthlyVal > 0 && (

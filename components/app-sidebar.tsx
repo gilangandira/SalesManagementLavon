@@ -187,7 +187,8 @@ export function AppSidebar({ user, ...props }: React.ComponentProps<typeof Sideb
       isActive: true, // Menu otomatis terbuka
       items: [
         { title: "All Users", url: "/users" },
-        { title: "Marketing Rank", url: "/admin/rank" }
+        { title: "Marketing Rank", url: "/admin/rank" },
+        { title: "Commissions", url: "/commissions" }
       ]
     } as any);
   }

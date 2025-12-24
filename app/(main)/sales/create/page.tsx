@@ -67,6 +67,7 @@ export default function CreateSalePage() {
     payment_amount: 0,
     cicilan_count: 12, // Default 12x cicilan untuk Cash Bertahap
     payment_method: "cash_bertahap", // Default metode pembayaran
+    interest_rate: 0, // Default 0% interest
   });
 
   // Perhitungan Otomatis untuk KPR
@@ -379,26 +380,65 @@ export default function CreateSalePage() {
 
                 {/* Tampilkan Input Cicilan HANYA jika bukan KPR */}
                 {!isKPR && (
-                  <div className="flex flex-col gap-2">
-                    <Label>Cicilan Count (Months)</Label>
-                    <Input
-                      type="number"
-                      required
-                      value={form.cicilan_count}
-                      onChange={(e) =>
-                        setForm({
-                          ...form,
-                          cicilan_count: Number(e.target.value),
-                        })
-                      }
-                    />
-                    {/* Estimasi Cicilan per Bulan */}
-                    {(form.price - form.payment_amount) > 0 && form.cicilan_count > 0 && (
-                      <p className="text-sm text-muted-foreground">
-                        Est. Monthly: <span className="font-semibold text-blue-600">{formatCurrency((form.price - form.payment_amount) / form.cicilan_count)}</span>
-                      </p>
-                    )}
-                  </div>
+                  <>
+                    <div className="flex flex-col gap-2">
+                      <Label>Cicilan Count (Months)</Label>
+                      <Input
+                        type="number"
+                        required
+                        value={form.cicilan_count}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            cicilan_count: Number(e.target.value),
+                          })
+                        }
+                      />
+
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      <Label>Suku Bunga (% per year)</Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={form.interest_rate}
+                        onChange={(e) =>
+                          setForm({
+                            ...form,
+                            interest_rate: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </div>
+
+                    <div className="col-span-2">
+                      {/* Estimasi Cicilan per Bulan */}
+                      {(form.price - form.payment_amount) > 0 && form.cicilan_count > 0 && (
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Est. Monthly: <span className="font-semibold text-blue-600">
+                            {(() => {
+                              const principal = form.price - form.payment_amount;
+                              if (form.interest_rate > 0) {
+                                // Annuity / PMT Logic
+                                const r = (form.interest_rate / 12) / 100;
+                                const n = form.cicilan_count;
+                                if (r === 0) return formatCurrency(principal / n);
+                                const monthly = (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+                                return formatCurrency(monthly);
+                              }
+                              return formatCurrency(principal / form.cicilan_count);
+                            })()}
+                          </span>
+                          {form.interest_rate > 0 && (
+                            <span className="text-xs text-gray-500 ml-2">
+                              (Annuity Rate {form.interest_rate}%)
+                            </span>
+                          )}
+                        </p>
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
 
@@ -425,6 +465,23 @@ export default function CreateSalePage() {
                     readOnly={isKPR}
                     className={cn("font-semibold text-green-700", isKPR && "bg-gray-100")}
                   />
+                  {form.interest_rate > 0 && (form.price - form.payment_amount) > 0 && form.cicilan_count > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Est. Total Bunga: <span className="font-semibold text-red-600">
+                        {(() => {
+                          const principal = form.price - form.payment_amount;
+                          // Annuity / PMT Logic
+                          const r = (form.interest_rate / 12) / 100;
+                          const n = form.cicilan_count;
+                          if (r === 0) return formatCurrency(0);
+
+                          const monthly = (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+                          const totalPaid = monthly * n;
+                          return formatCurrency(totalPaid - principal);
+                        })()}
+                      </span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Sisa Tagihan (Hanya untuk Cash Bertahap) */}

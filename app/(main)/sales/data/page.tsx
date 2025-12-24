@@ -41,7 +41,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Search, Check, ChevronsUpDown } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
+import { Search, Check, ChevronsUpDown, Info } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const API_URL = `${process.env.NEXT_PUBLIC_API_URL || "https://forestgreen-shrew-854212.hostingersite.com/public/api"}/sales`;
@@ -56,6 +61,7 @@ interface Sale {
   cicilan_count: number;
   locked_type: string;
   monthly_installment: number;
+  interest_rate?: number; // Added
   // New computed attribute
   payment_status_info: {
     status: string; // "Overdue", "Due Soon", "Normal", "Paid"
@@ -349,8 +355,70 @@ export default function SalesPage() {
                           {(s.monthly_installment > 0) && (
                             <div className="text-xs text-muted-foreground">
                               {formatCurrency(s.monthly_installment)}/mo
+                              {(s.interest_rate ?? 0) > 0 && (
+                                <HoverCard>
+                                  <HoverCardTrigger asChild>
+                                    <Info className="h-3 w-3 inline ml-1 text-blue-500 cursor-help" />
+                                  </HoverCardTrigger>
+                                  <HoverCardContent className="w-80">
+                                    <div className="space-y-2">
+                                      <h4 className="text-sm font-semibold">Interest Detail ({s.interest_rate}%)</h4>
+                                      <div className="text-xs space-y-1">
+                                        {(() => {
+                                          // Reverse calculate Principal (Loan Amount) from Monthly Installment using PV formula
+                                          // PV = PMT * (1 - (1+r)^-n) / r
+                                          const rate = s.interest_rate ?? 0;
+                                          const monthly = Number(s.monthly_installment) || 0;
+                                          const months = Number(s.cicilan_count) || 0;
+                                          let principalLoan = 0;
+
+                                          if (rate > 0) {
+                                            const r = (rate / 12) / 100;
+                                            principalLoan = monthly * (1 - Math.pow(1 + r, -months)) / r;
+                                          } else {
+                                            principalLoan = monthly * months;
+                                          }
+
+                                          const totalInstallment = monthly * months;
+                                          const totalInterest = totalInstallment - principalLoan;
+                                          const grandTotal = Number(s.price) + totalInterest;
+
+                                          return (
+                                            <>
+                                              <div className="flex justify-between">
+                                                <span className="text-muted-foreground">Principal (Loan Amount):</span>
+                                                <span>{formatCurrency(principalLoan)}</span>
+                                              </div>
+                                              <div className="flex justify-between">
+                                                <span className="text-muted-foreground">Total Interest:</span>
+                                                <span className="text-red-600">
+                                                  {formatCurrency(totalInterest)}
+                                                </span>
+                                              </div>
+                                              <div className="pt-1 border-t flex justify-between font-medium">
+                                                <span>Total Cicilan (Loan + Bunga):</span>
+                                                <span>
+                                                  {formatCurrency(totalInstallment)}
+                                                </span>
+                                              </div>
+                                              <div className="pt-1 border-t flex justify-between font-bold text-blue-700">
+                                                <span>Grand Total (Hrg + Bunga):</span>
+                                                <span>
+                                                  {formatCurrency(grandTotal)}
+                                                </span>
+                                              </div>
+                                            </>
+                                          );
+                                        })()}
+                                      </div>
+                                    </div>
+                                  </HoverCardContent>
+                                </HoverCard>
+                              )}
+
                             </div>
                           )}
+
                         </TableCell>
                         <TableCell>
                           <span className="font-medium">{info.next_due_date}</span>
